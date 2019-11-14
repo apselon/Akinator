@@ -7,17 +7,19 @@ void ask_question(Tree::tree_t* answers, Tree::node_t* cur){
 
 	if (!cur->has_left && !cur->has_rigth){
 		make_guess(answers, cur);
+		return;
 	}
 
-	printf("%s?\n", cur->val);
+	printf("Akk: %s?\n", cur->val);
 
-	char resp = getchar();;
+	char resp[MAX_BUFF_SIZE] = ""; 
+	fgets(resp, MAX_BUFF_SIZE, stdin);
 
-	if (resp == 'y'){
+	if (strstr(resp, "Yes") != NULL){
 		ask_question(answers, cur->left);
 	} else {
 		ask_question(answers, cur->right);
-	}
+		}
 
 }
 
@@ -27,36 +29,66 @@ void make_guess(Tree::tree_t* answers, Tree::node_t* leaf){
 	Assert(answers != NULL);
 	Assert(leaf != NULL);
 
-	printf("it is %s, right?\n", leaf->val);
+	printf("Akk: I'm pretty sure it is %s. Am I right?\n", leaf->val);
 
-	char resp = getchar();
+	char resp[MAX_BUFF_SIZE] = ""; 
+	fgets(resp, MAX_BUFF_SIZE, stdin);
 
-	if (resp == 'y'){
-		printf("I knew it\n");
+	if (strstr(resp, "да") != NULL){
+		printf("Akk: I knew it!!!\n");
 	} else {
 		add_new_character(answers, leaf);	
 	}
 }
 
 
-void add_new_character(Tree::tree_t* answers, Tree::node_t* old_character, FILE* source){
+void add_new_character(Tree::tree_t* answers, Tree::node_t* old_character){
 
 	Assert(answers != NULL);
 	Assert(old_character != NULL);
 
 	Tree::node_t* new_character = NEW_NODE;
-	printf("What character did you have in minde?\n");
-	scanf("%ms", &new_character->val);
+	printf("Akk: I'm intrigued, so what did you have in mind?\n");
+	scanf("%m[^\n]", &new_character->val);
+	getchar();
 
 	Tree::node_t* new_question = NEW_NODE;
-	printf("What fact differs %s from %s?\n", new_character->val, old_character->val);
-	scanf("%ms", &new_question->val);
+	printf("Akk: I don't really know what is the difference between %s and %s?\n", new_character->val, old_character->val);
+	scanf("%m[^\n]", &new_question->val);
+	getchar();
+
+	if (old_character == old_character->parent->left){
+		Tree::replace_left(old_character->parent, new_question);
+	}
+
+	if (old_character == old_character->parent->right){
+		Tree::replace_right(old_character->parent, new_question);
+	}
 
 	Tree::attach_left(answers, new_question, new_character);
 	Tree::attach_right(answers, new_question, old_character);
-	Tree::replace_left(old_character, new_question);
 
-	Tree::save_to_file(answers, source);
+	//Tree::draw(answers, 1);
+	Tree::save_to_file(answers, data_source);
 
 }
 
+
+int main(){
+	Tree::tree_t answers = {}; 
+
+	char resp[MAX_BUFF_SIZE] = ""; 
+
+	do {
+		fseek(data_source, 0, SEEK_SET);
+
+		answers = Tree::read_from_file(data_source);
+		ask_question(&answers, answers.root);
+
+		printf("Akk: Do you wanna play again?\n");
+		fgets(resp, MAX_BUFF_SIZE, stdin);
+		if (strstr(resp, "no") != NULL) break;
+	} while (true);
+
+	fclose(data_source);
+}
