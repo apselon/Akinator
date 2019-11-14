@@ -19,7 +19,7 @@ void ask_question(Tree::tree_t* answers, Tree::node_t* cur){
 		ask_question(answers, cur->left);
 	} else {
 		ask_question(answers, cur->right);
-		}
+	}
 
 }
 
@@ -68,9 +68,53 @@ void add_new_character(Tree::tree_t* answers, Tree::node_t* old_character){
 	Tree::attach_left(answers, new_question, new_character);
 	Tree::attach_right(answers, new_question, old_character);
 
-	//Tree::draw(answers, 1);
 	Tree::save_to_file(answers, data_source);
 
+}
+
+
+int list_vals_from_node_to_ancestor(Tree::node_t* cur, Tree::node_t* ancestor, Tree::elem_t* buffer){
+
+	Assert(cur != NULL);
+	Assert(ancestor != NULL);
+	Assert(buffer != NULL);
+
+	if (cur->level > ancestor->level){
+		return 0;
+	}
+
+	int len = 0;
+	
+	while (cur != ancestor){
+		buffer[len] = cur->val;
+		++len;
+		if (!cur->has_parent) break;
+		cur = cur->parent;
+	}
+
+	return len;
+}
+
+
+Tree::node_t* find_common_ancestor(Tree::node_t* first, Tree::node_t* second){
+	
+	Assert(first != NULL);	
+	Assert(second != NULL);	
+
+	while (first->level > second->level){
+		first = first->parent;
+	}
+
+	while (second->level > first->level){
+		second = second->parent;
+	}
+
+	while (first != second){
+		first = first->parent;
+		second = second->parent;
+	}
+
+	return first;
 }
 
 

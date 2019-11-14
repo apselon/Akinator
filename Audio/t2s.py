@@ -5,4 +5,4 @@ rec = sr.Recognizer();
 with sr.Microphone() as micro:
     audio = rec.listen(micro)
 
-print(rec.recognize_google_cloud(audio));
+print("Text:" + rec.recognize_google(audio));
