@@ -139,8 +139,8 @@ void print_definition(Tree::node_t* cur, Tree::node_t* finish, bool* flag){
 void guessing_mode(){
 
 	Tree::tree_t answers = {}; 
-
 	char resp[MAX_BUFF_SIZE] = ""; 
+	char command = 0;
 
 	do {
 		FILE* data_source = fopen(tree_filename, "r");
@@ -149,10 +149,13 @@ void guessing_mode(){
 		ask_question(&answers, answers.root, data_source);
 		fclose(data_source);
 
-		printf("press e to quit to the menu\n");
+		printf("Press e to quit to the menu\n");
+		printf("Press q to exit from the game\n");
+		command = getchar();
 
-	} while (getchar() != 'e');
+	} while (command != 'e' && command != 'q');
 
+	if (command == 'q') exit(EXIT_SUCCESS);
 	Tree::destruct(answers.root);
 }
 
@@ -163,6 +166,7 @@ void definition_mode(){
 
 	char resp[MAX_BUFF_SIZE] = ""; 
 	bool flag = 0;
+	char command = 0;
 
 	do {
 		FILE* data_source = fopen(tree_filename, "r");
@@ -182,9 +186,12 @@ void definition_mode(){
 
 		fclose(data_source);
 
-		printf("press e to quit to the menu\n");
+		printf("Press e to quit to the menu\n");
+		printf("Press q to exit from the game\n");
+		command = getchar();
 
-	} while (getchar() != 'e');
+	} while (command != 'e' && command != 'q');
+	if (command == 'q') exit(EXIT_SUCCESS);
 }
 
 
@@ -198,7 +205,8 @@ void comaparison_mode(){
 	Tree::node_t* second = {};
 	Tree::node_t* common = {};
 
-	bool has_property;
+	bool has_property = 0;
+	char command = 0;
 
 	do {
 		FILE* data_source = fopen(tree_filename, "r");
@@ -237,9 +245,12 @@ void comaparison_mode(){
 		SAY("I am certanly a genius.\n");
 		fclose(data_source);
 
-		printf("press e to quit to the menu\n");
+		printf("Press e to quit to the menu\n");
+		printf("Press q to exit from the game\n");
+		command = getchar();
 		
-	} while (getchar() != 'e');
+	} while (command != 'e' && command != 'q');
+	if (command == 'q') exit(EXIT_SUCCESS);
 
 	destruct(answers.root);
 }
@@ -260,7 +271,7 @@ int main(){
 	do {
 		SAY("Do you want to:\n");
 		SAY("\t1 - know a defintion of something?\n");
-		SAY("\t2 - see a difference between to things?\n");
+		SAY("\t2 - see a difference between two things?\n");
 		SAY("\t3 - play a game with me?\n");
 		SAY("\t4 - get my full knowledge?\n");
 		SAY("\t5 - say goodbye?\n");
