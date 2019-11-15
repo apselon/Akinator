@@ -3,6 +3,16 @@
 #include "../Tree/Tree.cpp"
 
 
+#define SAY(...){ 												   			\
+	char str_buff[MAX_BUFF_SIZE] = "";								    	\
+	char say_buff[MAX_BUFF_SIZE] = "";								    	\
+	sprintf(str_buff, __VA_ARGS__); 								    	\
+	sprintf(say_buff, "espeak \"%s\" -s 170 2> /dev/null \n", str_buff); 	\
+	printf("%s", str_buff);													\
+	system(say_buff);												    	\
+}																    		\
+
+
 char tree_filename[] = "tree.txt";
 const int MAX_BUFF_SIZE = 512;
 

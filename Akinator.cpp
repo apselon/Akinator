@@ -10,7 +10,7 @@ void ask_question(Tree::tree_t* answers, Tree::node_t* cur, FILE* data_source){
 		return;
 	}
 
-	printf("Akk: %s?\n", cur->val);
+	SAY("%s?\n", cur->val);
 
 	char resp[MAX_BUFF_SIZE] = ""; 
 	fgets(resp, MAX_BUFF_SIZE, stdin);
@@ -29,13 +29,13 @@ void make_guess(Tree::tree_t* answers, Tree::node_t* leaf, FILE* data_source){
 	Assert(answers != NULL);
 	Assert(leaf != NULL);
 
-	printf("Akk: I'm pretty sure it is %s. Am I right?\n", leaf->val);
+	SAY("I'm pretty sure it is %s. Am I right?\n", leaf->val);
 
 	char resp[MAX_BUFF_SIZE] = ""; 
 	fgets(resp, MAX_BUFF_SIZE, stdin);
 
 	if (strstr(resp, "yes") != NULL){
-		printf("Akk: I knew it!!!\n");
+		SAY("I knew it!\n");
 	} else {
 		add_new_character(answers, leaf, data_source);	
 	}
@@ -47,15 +47,24 @@ void add_new_character(Tree::tree_t* answers, Tree::node_t* old_character, FILE*
 	Assert(answers != NULL);
 	Assert(old_character != NULL);
 
+	char resp[MAX_BUFF_SIZE] = ""; 
 	Tree::node_t* new_character = NEW_NODE;
-	printf("Akk: I'm intrigued, so what did you have in mind?\n");
-	scanf("%m[^\n]", &new_character->val);
-	getchar();
-
 	Tree::node_t* new_question = NEW_NODE;
-	printf("Akk: I don't really know this guy, what is the difference between %s and %s?\n", new_character->val, old_character->val);
-	scanf("%m[^\n]", &new_question->val);
-	getchar();
+
+	do {
+		SAY("I'm intrigued, so what did you have in mind?\n");
+		scanf("%m[^\n]", &new_character->val);
+		getchar();
+
+		SAY("I don't really know this guy, what is the difference between %s and %s?\n", new_character->val, old_character->val);
+		scanf("%m[^\n]", &new_question->val);
+		getchar();
+
+		SAY("Are you sure that in contrast to %s, %s is %s?", old_character->val, new_character->val, new_question->val);
+
+		fgets(resp, MAX_BUFF_SIZE, stdin);
+
+	} while (strstr(resp, "yes") == NULL);
 
 	if (old_character == old_character->parent->left){
 		Tree::replace_left(old_character->parent, new_question);
@@ -70,9 +79,8 @@ void add_new_character(Tree::tree_t* answers, Tree::node_t* old_character, FILE*
 
 	data_source = freopen(tree_filename, "w", data_source);
 	Tree::save_to_file(answers, data_source);
-	fclose(data_source);
 
-	printf("Akk: Thank you, even genius should learn something new.\n");
+	SAY("Thank you, even genius should learn something new.\n");
 
 }
 
@@ -104,6 +112,7 @@ void print_definition(Tree::node_t* cur, Tree::node_t* finish, bool* flag){
 
 	Assert(cur != NULL);
 
+
 	if (cur->parent == NULL){
 		return;
 	}
@@ -114,12 +123,14 @@ void print_definition(Tree::node_t* cur, Tree::node_t* finish, bool* flag){
 
 
 	if (cur == cur->parent->left){
-		printf("%s, ", cur->parent->val);
+		SAY("%s, ", cur->parent->val);
+		fflush(stdout);
 		*flag = 1;
 	}
 
 	if (cur == cur->parent->right){
-		printf("not %s, ", cur->parent->val);
+		SAY("not %s, ", cur->parent->val);
+		fflush(stdout);
 		*flag = 1;
 	}
 
@@ -160,15 +171,14 @@ void definition_mode(){
 		Tree::node_t* desired = {};
 
 		do {
-			printf("Difinition of what you wanna know?\n");
+			SAY("Difinition of what you wanna know?\n");
 			scanf("%[^\n]", resp);
 			getchar();
 			desired = Tree::find_node_by_val(answers.root, resp, strcmp, answers.size);	
 		} while (desired == NULL);
 
-		printf("Akk: ");
 		print_definition(desired, answers.root, &flag);
-		printf("\n\n");
+		SAY("I am certanly a genius\n\n")
 
 		fclose(data_source);
 
@@ -196,14 +206,14 @@ void comaparison_mode(){
 
 
 		do {
-			printf("What do you want to compare?\n");
+			SAY("What do you want to compare?\n");
 			scanf("%[^\n]", resp);
 			getchar();
 
 			first = Tree::find_node_by_val(answers.root, resp, strcmp, answers.size);	
 			if (first == NULL) continue;
 		
-			printf("What do you want to compare %s with?\n", first->val);
+			SAY("What do you want to compare %s with?\n", first->val);
 			scanf("%[^\n]", resp);
 			getchar();
 		
@@ -214,17 +224,17 @@ void comaparison_mode(){
 		} while (first == NULL || second == NULL);
 
 
-		printf("Actually, %s and %s have in common: ", first->val, second->val);
+		SAY("Actually, %s and %s have in common: ", first->val, second->val);
 		print_definition(common, answers.root, &has_property);
 		if (!has_property){
-			printf("nothing, ");
+			SAY("nothing, ");
 		}
 
-		printf("however, %s is: ", first->val);
+		SAY("however, %s is: ", first->val);
 		print_definition(first, common, &has_property);
-		printf("when %s is: ", second->val);
+		SAY("when %s is: ", second->val);
 		print_definition(second, common, &has_property);
-		printf("I am certanly a genius.\n");
+		SAY("I am certanly a genius.\n");
 		fclose(data_source);
 
 		printf("press e to quit to the menu\n");
@@ -245,15 +255,15 @@ void show_tree(){
 }
 
 int main(){	
-		printf("Akk: Hello dear, come in, you'll be my guest\n");
+		SAY("Hello dear, come in, you'll be my guest\n");
 		int choice = 0;
 	do {
-		printf("Akk: Do you want to:\n");
-		printf("\t1 - know a definion of something?\n");
-		printf("\t2 - see a difference between to things?\n");
-		printf("\t3 - play a game with me?\n");
-		printf("\t4 - get my full knowledge?\n");
-		printf("\tt - say goodbye?\n");
+		SAY("Do you want to:\n");
+		SAY("\t1 - know a defintion of something?\n");
+		SAY("\t2 - see a difference between to things?\n");
+		SAY("\t3 - play a game with me?\n");
+		SAY("\t4 - get my full knowledge?\n");
+		SAY("\t5 - say goodbye?\n");
 
 		scanf("%d", &choice);
 		getchar();
