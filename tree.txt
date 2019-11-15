@@ -1,1 +1,38 @@
-{"is human"{"Obama"}{"Stone"}}
+{"human"
+{
+	"algeom simenarian"
+	{
+		"Ershov"
+	}
+	{
+		"matan simenarian"
+		{
+			"Kuzmenko"
+		}
+		{
+			"programming simenarian"
+			{
+				"Ded"
+			}
+			{
+				"Obama"
+			}
+		}
+	}
+}
+{
+	"vegetable"
+	{
+		"red"
+		{
+			"tomato"
+		}
+		{
+			"cucumber"
+		}
+	}
+	{
+		"stone"
+	}
+}
+}
